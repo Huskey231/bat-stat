@@ -16,12 +16,8 @@ public class Viewer{
     static GraphicsConfiguration gc;
     static JTextField startPercent, endPercent;
     BatteryCalculator batCalc = new BatteryCalculator();    
-    public static void main(String[] args){
-        Viewer view = new Viewer();
-        view.mainMenu();
-    }
 
-    private void mainMenu(){
+    public void mainMenu(){
         JFrame frame = new JFrame(gc);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Watch Battery Tracker");
@@ -45,31 +41,34 @@ public class Viewer{
                         int startLife = Integer.parseInt(startPercent.getText());
                         int endLife = Integer.parseInt(endPercent.getText());
                         calculator(startLife, endLife);
-                        try{
-                            DataRecorder.recordNewEntry(startLife, endLife);
-                        }
-                        catch(Exception exception){
-                            JOptionPane.showMessageDialog(null, exception+" occurred.");
-                        }
                     }
                     catch(NumberFormatException nf){
-                        JOptionPane.showMessageDialog(null, "Must enter a number in both fields to continue.", "Illegal Argument Exception", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Must enter a number in both fields to continue.", "Illegal Argument", JOptionPane.ERROR_MESSAGE);
                     }
                     
                 }
             }
         });
-        //TODO Change it so that info is passed to the calculator method that then verifies if data is correct. Also have it so that battery calculator only calls predicted life upon verifying data
         frame.getContentPane().add(submit);
-
         frame.setVisible(true);
     }
 
     private void calculator(int start, int end){
         int dayLife = 0;
         dayLife = batCalc.calcDayLife(start, end);
-        double predictedLife = batCalc.calcPredictedLife(dayLife);
-        JOptionPane.showMessageDialog(null, dayLife+"% consumed today.\nPredicted total battery life " + new DecimalFormat("#.##").format(predictedLife) + " days.");
+        if(dayLife == -1){
+            return;
+        }
+        else{
+            double predictedLife = batCalc.calcPredictedLife(dayLife);
+            JOptionPane.showMessageDialog(null, dayLife+"% consumed today.\nPredicted total battery life " + new DecimalFormat("#.##").format(predictedLife) + " days.");
+            try{
+                DataRecorder.recordNewEntry(start, end);
+            }
+            catch(Exception e){
+                JOptionPane.showMessageDialog(null, e + " occurred.");
+            }
 
+        }
     }
 }
