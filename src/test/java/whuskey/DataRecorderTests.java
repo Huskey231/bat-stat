@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.nio.file.Files;
-import java.nio.CharBuffer;
 import java.nio.file.*;
 
 import whuskey.DataRecorder;
@@ -48,11 +47,47 @@ public class DataRecorderTests{
 
     @Test
     public void recordNewEntryTestCheckDataRecorded(){
-        CharBuffer fileContents = CharBuffer.allocate(7);
+        char[] fileContents = new char[7];
+        String actualData = "10d 90e";
+        char[] actualDataArray = new char[7];
+        actualDataArray = actualData.toCharArray();
+        boolean identical = true;
         try{
             DataRecorder.recordNewEntry(100, 90);
             FileReader fr = new FileReader(old);
-            fr.read(fileContents);
+            fr.read(fileContents, 0, fileContents.length);
+            for(int i = 0; i < 7; i++){
+                if(fileContents[i] != actualDataArray[i]){
+                    identical = false;
+                }
+            }
+            assertTrue(identical);
+            fr.close();
+        }
+        catch(Exception e){
+            System.out.println(e + " occurred.");
+        }
+    }
+
+    @Test
+    public void recordNewEntryTestCheckDataAdded(){
+        try{
+            DataRecorder.recordNewEntry(100, 90);
+            DataRecorder.recordNewEntry(90, 80);
+            DataRecorder.recordNewEntry(80, 70);
+            String expectedData = "10d 90e\n10d 80e\n10d 70e\n";
+            char[] expectedDataArray = expectedData.toCharArray();
+            char[] actualData = new char[27];
+            boolean identical = true;
+            FileReader fr = new FileReader(old);
+            fr.read(actualData, 0, actualData.length);
+            for(int i = 0; i < 26; i++){
+                if(actualData[i] != expectedDataArray[i]){
+                    identical = false;
+                }
+            }
+            assertTrue(identical);
+            fr.close();
         }
         catch(Exception e){
             System.out.println(e + " occurred.");
@@ -61,8 +96,6 @@ public class DataRecorderTests{
 
     @After
     public void tearDown(){
-        
-        
         if(old != null){
             try{
                 if(old.exists()){
