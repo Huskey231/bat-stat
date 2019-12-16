@@ -20,11 +20,9 @@ public class Viewer{
     BatteryCalculator batCalc = new BatteryCalculator();    
 
     public void mainMenu(){
-        //Icon stuff sets everything on fire
-        //URL iconPath = getClass().getResource("src\\main\\images\\BatteryIcon.png"); //Fire starter
-        //ImageIcon icon = new ImageIcon(iconPath); //More fire
+        ImageIcon icon = new ImageIcon("src\\main\\images\\BatteryIcon.png");
         JFrame frame = new JFrame(gc);
-        //frame.setIconImage(icon.getImage()); //Last of the fire
+        frame.setIconImage(icon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Watch Battery Tracker");
         frame.setSize(400, 150);
