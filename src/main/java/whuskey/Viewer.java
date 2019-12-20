@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
 
@@ -17,7 +16,8 @@ public class Viewer{
 
     static GraphicsConfiguration gc;
     static JTextField startPercent, endPercent;
-    BatteryCalculator batCalc = new BatteryCalculator();    
+    BatteryCalculator batCalc = new BatteryCalculator(); 
+    ChartPlotter chartPlot = new ChartPlotter();
 
     public void mainMenu(){
         ImageIcon icon = new ImageIcon("src\\main\\images\\BatteryIcon.png");
@@ -53,7 +53,14 @@ public class Viewer{
                 }
             }
         });
+        JButton chart = new JButton("Chart");
+        chart.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                chartPlot.createChart();
+            }
+        });
         frame.getContentPane().add(submit);
+        frame.getContentPane().add(chart);
         frame.setVisible(true);
     }
 
