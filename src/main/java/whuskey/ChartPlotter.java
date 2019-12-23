@@ -1,12 +1,24 @@
 package whuskey;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.Axis;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickMarkPosition;
+import org.jfree.chart.axis.TickUnit;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 class ChartPlotter{
 
@@ -18,6 +30,10 @@ class ChartPlotter{
         listFiller();
         XYSeries highEnd = createHighEnd();
         XYSeries lowEnd = createLowEnd();
+        XYSeriesCollection rangeSet = new XYSeriesCollection();
+        rangeSet.addSeries(highEnd);
+        rangeSet.addSeries(lowEnd);
+
     }
 
     private XYSeries createHighEnd(){
@@ -60,6 +76,32 @@ class ChartPlotter{
         catch(Exception e){
             System.out.println(e);
         }
+    }
+
+    /*May need to change the XYSeriesCollection to an XYDataSet (should also then cast the data passed in)*/
+    private JFreeChart chartRenderer(XYSeriesCollection data){
+        JFreeChart chart = ChartFactory.createXYBarChart("Battery Usage", "Day", false, "Percentage", data);
+        chart.setBackgroundPaint(Color.white);
+        XYDifferenceRenderer xyRenderer = new XYDifferenceRenderer(Color.yellow, Color.yellow, false);
+        xyRenderer.setSeriesStroke(0, new BasicStroke(2.0f));
+        xyRenderer.setSeriesStroke(1, new BasicStroke(2.0f));
+        xyRenderer.setSeriesPaint(0, Color.green);
+        xyRenderer.setSeriesPaint(1, Color.red);
+        final XYPlot plot = chart.getXYPlot();
+        plot.setRenderer(xyRenderer);
+        plot.setBackgroundPaint(Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white);
+        plot.setRangeGridlinePaint(Color.white);
+        final DateAxis domainAxis = new DateAxis("Day");
+        domainAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
+        domainAxis.setLowerMargin(0.0);
+        domainAxis.setUpperMargin(30.0);
+        plot.setDomainAxis(domainAxis);
+        plot.setForegroundAlpha(0.5f);
+
+        
+
+        return chart;
     }
 
 
