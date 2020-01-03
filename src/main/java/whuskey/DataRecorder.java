@@ -56,4 +56,3 @@ class DataRecorder{
         }
     }
 }
-//TODO rewrite method that specifically scrapes old data

@@ -8,32 +8,35 @@ import java.io.FileReader;
 import java.util.LinkedList;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.Axis;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickMarkPosition;
-import org.jfree.chart.axis.TickUnit;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.ApplicationFrame;
 
-class ChartPlotter{
-
+class ChartPlotter extends ApplicationFrame{
 
     File df = new File("src\\main\\resources\\BatteryData.txt");
     LinkedList<String> fileData = new LinkedList<String>();
 
-    public void createChart(){
+    public ChartPlotter(){
+        
+        super("Battery Statistics");
+
         listFiller();
         XYSeries highEnd = createHighEnd();
         XYSeries lowEnd = createLowEnd();
-        XYSeriesCollection rangeSet = new XYSeriesCollection();
-        rangeSet.addSeries(highEnd);
-        rangeSet.addSeries(lowEnd);
+        XYSeriesCollection dataSet = new XYSeriesCollection();
+        dataSet.addSeries(highEnd);
+        dataSet.addSeries(lowEnd);
 
+        final JFreeChart chart = chartRenderer(dataSet);        
+        final ChartPanel panel = new ChartPanel(chart);
+        panel.setPreferredSize(new java.awt.Dimension(800, 400));
+        setContentPane(panel);
     }
 
     private XYSeries createHighEnd(){
@@ -52,11 +55,11 @@ class ChartPlotter{
     }
 
     private XYSeries createLowEnd(){
-        XYSeries series = new XYSeries("Start Life");
+        XYSeries series = new XYSeries("End Life");
         int endValue;
         int day = 1;
         for(String data : fileData){
-            String[] temp =data.split(" ");
+            String[] temp = data.split(" ");
             endValue = Integer.parseInt(temp[1].substring(0, temp[1].length()-1));
             series.add(day, endValue);
             day++;
@@ -78,7 +81,6 @@ class ChartPlotter{
         }
     }
 
-    /*May need to change the XYSeriesCollection to an XYDataSet (should also then cast the data passed in)*/
     private JFreeChart chartRenderer(XYSeriesCollection data){
         JFreeChart chart = ChartFactory.createXYBarChart("Battery Usage", "Day", false, "Percentage", data);
         chart.setBackgroundPaint(Color.white);
@@ -92,44 +94,16 @@ class ChartPlotter{
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
-        final DateAxis domainAxis = new DateAxis("Day");
-        domainAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
-        domainAxis.setLowerMargin(0.0);
-        domainAxis.setUpperMargin(30.0);
+        final ValueAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setAutoRange(false);
+        domainAxis.setRange(0, 30);
         plot.setDomainAxis(domainAxis);
         plot.setForegroundAlpha(0.5f);
-
+        final ValueAxis rangeAxis = plot.getRangeAxis();
+        rangeAxis.setAutoRange(false);
+        rangeAxis.setRange(0, 100);
+        plot.setRangeAxis(rangeAxis);
         
-
         return chart;
     }
-
-
-    /*
-    DefaultCategoryDataset createDataSet(){
-        File df = new File("src\\main\\resources\\BatteryData.txt");
-        BufferedReader fr = new BufferedReader(new FileReader(df));
-        DefaultCategoryDataset chartData = new DefaultCategoryDataset();
-        LinkedList<String> dataSet = new LinkedList<String>();
-        String line;
-        int day = 1;
-        int value;
-        
-        while((line = fr.readLine()) != null){
-            dataSet.add(line);
-        }
-        for(String data : dataSet){
-            String[] temp = dataSet.peek().split(" ");
-            value = Integer.parseInt(temp[1].substring(0, temp[1].length()));
-            //TODO take the end value and add the difference amount to it, add the high value per date then the low value
-            chartData.addValue(value, day, null);
-
-
-            day++;
-        }
-
-        return;
-    }
-
-    */
-}
+}   
