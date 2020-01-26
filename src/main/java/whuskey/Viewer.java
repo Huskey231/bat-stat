@@ -71,63 +71,6 @@ public class Viewer {
         identifyOutliers.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 outlierMessageBuilder();
-        //         try{
-        //             BufferedReader br = new BufferedReader(new FileReader("src\\main\\resources\\BatteryData.txt"));
-        //             HashMap<Integer, Integer> data = new HashMap<Integer, Integer>();
-        //             String datum;
-        //             LinkedList<Double> consumptionValues = new LinkedList<Double>();
-        //             String[] temp;
-        //             int day = 1;
-        //             int weeks;
-        //             LinkedList<Integer> outliersHigh = new LinkedList<>();
-        //             LinkedList<Integer> outliersLow = new LinkedList<>();
-        //             while((datum = br.readLine()) != null){
-        //                 temp = datum.split(" ");
-        //                 data.put(day, Integer.parseInt(temp[0].substring(0, temp[0].length()-1)));
-        //                 consumptionValues.add(Double.parseDouble(temp[0].substring(0, temp[0].length()-1)));
-        //                 day++;
-        //             }
-        //             BatteryCalculator bc = new BatteryCalculator();
-        //             double mean = bc.meanFinder(consumptionValues); //TODO collect the info 
-        //             double standardDev = bc.calcStandardDeviation();
-        //             for(Map.Entry<Integer, Integer> entry : data.entrySet()){
-        //                 if(entry.getValue() > mean+standardDev){
-        //                     outliersHigh.add(entry.getKey());
-        //                 }
-        //                 else if(entry.getValue() < mean-standardDev){
-        //                     outliersLow.add(entry.getKey());
-        //                 }
-        //             }
-        //             StringBuilder displayMessage = new StringBuilder(); //Want each line to be about 100 characters long maybe more
-        //             displayMessage.append("Your battery consumption exhibited excessive use ");
-        //             for(Integer key : outliersHigh){
-        //                 weeks = (int) key / 7;
-        //                 //Can probably remove these string adders and put them in a seperate method to make this more concise
-        //                 if(weeks > 0){
-        //                     displayMessage.append(weeks + " weeks and " + key % 7 + " days ago at " + data.get(key) + "% used, ");
-        //                 }
-        //                 else{
-        //                     displayMessage.append(key % 7 + " days ago at " + data.get(key) + "% used, ");
-        //                 } //use index of as well as checking the length of the list to see if the item is the last, also if it's the last item should end with a period and no space rather than ", "
-        //                   //should check if the outliershigh or low have any values before apending anything to the list
-        //             }
-        //             displayMessage.append("Your battery consumption exhibited low use ");
-        //             for(Integer key : outliersLow){
-        //                 weeks = key / 7;
-        //                 if(weeks > 0){
-        //                     displayMessage.append(weeks + " weeks and " + key % 7 + " days ago at " + data.get(key) + "% used, ");
-        //                 }
-        //                 else{
-        //                     displayMessage.append(key % 7 + " days ago at " + data.get(key) + "% used, ");
-        //                 }
-        //             }
-        //             JOptionPane.showMessageDialog(null, displayMessage.toString(), "Battery Statistics", JOptionPane.PLAIN_MESSAGE);
-        //         }
-        //         catch(Exception fileExc){
-        //             JOptionPane.showMessageDialog(null, "File reading error occurred.",
-        //                         "File Error", JOptionPane.ERROR_MESSAGE);
-        //         }
-        //     }
         }});
         frame.getContentPane().add(submit);
         frame.getContentPane().add(chart);
@@ -153,39 +96,6 @@ public class Viewer {
         }
     }
 
-    private void findOutliers(double mean){
-        try{
-            BufferedReader reader = new BufferedReader(new FileReader("src\\main\\resources\\BatteryData.txt"));
-            HashMap<Integer, Integer> differenceValues = new HashMap<Integer, Integer>();
-            String line;
-            String temp[];
-            while((line = reader.readLine()) != null){
-
-            }
-        }
-        catch(Exception e){
-
-        }
-    }
-
-    // private void outlierMessageBuilder(StringBuilder message, LinkedList<Integer> outHigh){
-    //     Integer finalValue;
-    //     Integer weeks;
-    //     String messageForWeek;
-    //     if(outHigh.size() == 0){
-    //         message.append("No abnormally high battery usage was found.");
-    //     }
-    //     else if(outHigh.size() > 2){
-    //         finalValue = outHigh.removeLast();
-    //         message.append("Battery usage was abnormally high ");
-    //         for (Integer outlierKey : outHigh) {
-    //             weeks = (Integer) outlierKey / 7;
-    //             messageForWeek = (weeks == 0) ? outlierKey + " days ago with " + 
-    //         }
-    //     }
-        
-    // }
-
     private void outlierMessageBuilder(){
         try{
             BufferedReader br = new BufferedReader(new FileReader("src\\main\\resources\\BatteryData.txt"));
@@ -204,7 +114,7 @@ public class Viewer {
                 day++;
             }
             BatteryCalculator bc = new BatteryCalculator();
-            double mean = bc.meanFinder(consumptionValues); //TODO collect the info 
+            double mean = bc.meanFinder(consumptionValues); 
             double standardDev = bc.calcStandardDeviation();
             for(Map.Entry<Integer, Integer> entry : data.entrySet()){
                 if(entry.getValue() > mean+standardDev){
@@ -248,13 +158,13 @@ public class Viewer {
                 displayMessage.deleteCharAt(displayMessage.length()-2);
                 weeks = finalKey / 7;
                 if(weeks > 1){
-                    displayMessage.append("and " + weeks + " weeks and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed. ");
+                    displayMessage.append("and " + weeks + " weeks and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed.");
                 }
                 else if(weeks > 0){
-                    displayMessage.append("and " + weeks + " week and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed. ");
+                    displayMessage.append("and " + weeks + " week and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed.");
                 }
                 else{
-                    displayMessage.append("and " + finalKey + " days ago with " + data.get(finalKey) + "% consumed. ");
+                    displayMessage.append("and " + finalKey + " days ago with " + data.get(finalKey) + "% consumed.");
                 }
             }
             if(outliersLow.size() == 0){
@@ -289,14 +199,14 @@ public class Viewer {
                 }
                 displayMessage.deleteCharAt(displayMessage.length()-2);
                 weeks = finalKey / 7;
-                if(weeks > 0){
-                    displayMessage.append("and " + weeks + " weeks and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed.");
+                if(weeks > 1){
+                    displayMessage.append(" and " + weeks + " weeks and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed.");
                 }
                 if(weeks > 0){
-                    displayMessage.append("and " + weeks + " week and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed.");
+                    displayMessage.append(" and " + weeks + " week and " + finalKey%7 + " days ago with " + data.get(finalKey) + "% consumed.");
                 }
                 else{
-                    displayMessage.append("and " + finalKey + " days ago with " + data.get(finalKey) + "% consumed.");
+                    displayMessage.append(" and " + finalKey + " days ago with " + data.get(finalKey) + "% consumed.");
                 }
             }
             int pointer = 100;
