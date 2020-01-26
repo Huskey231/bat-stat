@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import static java.nio.file.StandardCopyOption.*;
 
 import org.junit.Test;
 import org.junit.Assert;
@@ -77,22 +78,33 @@ public class BatteryCalculatorTests{
     @Test
     public void calcStandardDeviationTest(){
         boolean prevFileExists;
-        Double correctValue = 2.28035085; //TODO replace with the correct final standard deviation value
+        Double correctValue = 2.28;
         Double testedValue;
-        File old = new File("src\\main\\resources\\BatteryData.txt");
-        prevFileExists = old.exists() ? true : false;
+        File batData = new File("src\\main\\resources\\BatteryData.txt");
+        File batDataTemp = new File("src\\main\\resources\\BatteryDataTemp.txt");
+        File standDeviationFile = new File("src\\test\\java\\whuskey\\resources\\StandardDeviationTest.txt");
+        prevFileExists = batData.exists() ? true : false;
         if(prevFileExists == true){
             try{
                 Files.move(Paths.get("src\\main\\resources\\BatteryData.txt"), Paths.get("src\\main\\resources\\BatteryDataTemp.txt"));
                 Files.move(Paths.get("src\\test\\java\\whuskey\\resources\\StandardDeviationTest.txt"), Paths.get("src\\main\\resources\\BatteryData.txt"));
-                testedValue = bc.calcStandardDeviation();
-                boolean valuesEqual = (testedValue == correctValue) ? true : false;
+                testedValue = Math.floor(bc.calcStandardDeviation() * 100) / 100;
+                boolean valuesEqual = (testedValue.equals(correctValue)) ? true : false;
                 Files.move(Paths.get("src\\main\\resources\\BatteryData.txt"), Paths.get(("src\\test\\java\\whuskey\\resources\\StandardDeviationTest.txt")));
                 Files.move(Paths.get("src\\main\\resources\\BatteryDataTemp.txt"), Paths.get("src\\main\\resources\\BatteryData.txt"));
                 assertTrue("TestedValue " + testedValue, valuesEqual);
             }
             catch(IOException io){
                 System.out.println(io + " occurred.");
+                if(batDataTemp.exists() && !standDeviationFile.exists()){
+                    try{
+                        Files.move(Paths.get("src\\main\\resources\\BatteryData.txt"), Paths.get(("src\\test\\java\\whuskey\\resources\\StandardDeviationTest.txt")));
+                        Files.move(Paths.get("src\\main\\resources\\BatteryDataTemp.txt"), Paths.get("src\\main\\resources\\BatteryData.txt"), REPLACE_EXISTING);    
+                    }
+                    catch(Exception e){
+                        System.out.println(e);
+                    }
+                }
             }
         }
 
